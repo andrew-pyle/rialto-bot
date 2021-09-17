@@ -1,4 +1,4 @@
-import { SmtpClient } from "https://deno.land/x/smtp/mod.ts";
+import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 
 const { SEND_EMAIL, PWD, RECV_EMAIL } = Deno.env.toObject();
 

@@ -1,4 +1,7 @@
-import { DOMParser, Node } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
+import {
+  DOMParser,
+  Node,
+} from "https://deno.land/x/deno_dom@v0.1.14-alpha/deno-dom-wasm.ts";
 import parse from "https://deno.land/x/date_fns@v2.22.1/parse/index.js";
 
 export const RIALTO_URL = new URL("https://searcyrialtotheater.com");

@@ -5,53 +5,57 @@ import type { EmailOptions } from "./email.ts";
 
 const FEATURE_STORAGE_KEY = "rialtoFeature";
 
-try {
-  // Scrape the Rialto website
-  const { imdbLink, showTimes } = await fetchRialtoData();
+async function main(): Promise<void> {
+  try {
+    // Scrape the Rialto website
+    const { imdbLink, showTimes } = await fetchRialtoData();
 
-  // Translate web scrape into data from IMDB
-  const imdbId = extractLastPathElement(imdbLink.pathname);
-  const movieName = await fetchImdbData(imdbId);
+    // Translate web scrape into data from IMDB
+    const imdbId = extractLastPathElement(imdbLink.pathname);
+    const movieName = await fetchImdbData(imdbId);
 
-  // console.log({ imdbId, movieName }); // Debug
+    // console.log({ imdbId, movieName }); // Debug
 
-  // Has the feature changed since the last run?
-  const featureLastRun = localStorage.getItem(FEATURE_STORAGE_KEY);
+    // Has the feature changed since the last run?
+    const featureLastRun = localStorage.getItem(FEATURE_STORAGE_KEY);
 
-  // NoOp if no change in the movie
-  if (featureLastRun === imdbId) {
-    console.log(
-      `[${
-        new Date().toISOString()
-      }] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`,
-    );
-  } else {
-    console.log(
-      `[${
-        new Date().toISOString()
-      }] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`,
-    );
-    // Update Current Movie & send subscriber update
-    localStorage.setItem(FEATURE_STORAGE_KEY, imdbId);
+    // NoOp if no change in the movie
+    if (featureLastRun === imdbId) {
+      console.log(
+        `[${
+          new Date().toISOString()
+        }] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`,
+      );
+    } else {
+      console.log(
+        `[${
+          new Date().toISOString()
+        }] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`,
+      );
+      // Update Current Movie & send subscriber update
+      localStorage.setItem(FEATURE_STORAGE_KEY, imdbId);
 
-    // Convert dates into strings. TODO Create a better representation.
-    const showingsString = generateShowTimesText(showTimes);
+      // Convert dates into strings. TODO Create a better representation.
+      const showingsString = generateShowTimesText(showTimes);
 
-    const { subject, content } = generateEmailUpdateBody(
-      movieName,
-      showingsString,
-      RIALTO_URL,
-    );
+      const { subject, content } = generateEmailUpdateBody(
+        movieName,
+        showingsString,
+        RIALTO_URL,
+      );
 
-    // Send Notification
-    await notifySubscribers({
-      method: "email",
-      data: { subject, content },
-    });
+      // Send Notification
+      await notifySubscribers({
+        method: "email",
+        data: { subject, content },
+      });
+    }
+  } catch (err) {
+    console.error(`Failed job due to error: ${err}`);
   }
-} catch (err) {
-  console.error(`Failed job due to error: ${err}`);
 }
+
+main();
 
 /**
  * Helper Functions
