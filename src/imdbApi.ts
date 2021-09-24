@@ -14,6 +14,11 @@ export async function fetchImdbData(
   const imdbApiResponse = await fetch(
     `${IMDB_API_URL}/Title/${IMDB_API_KEY}/${id}`,
   );
+
+  if (!imdbApiResponse.ok) {
+    throw new Error(`Imdb API didn't send any data for IMDB id=${id}.`);
+  }
+
   const movieData: unknown = await imdbApiResponse.json();
 
   if (!isUseableImdbApiResponse(movieData)) {
