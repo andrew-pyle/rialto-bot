@@ -7,3 +7,9 @@ run.sh
 
 # Logs
 *.log
+
+# Build
+dist/
+
+# OS
+.DS_Store
