@@ -18,18 +18,16 @@ async function main(): Promise<void> {
     // Has the feature changed since the last run?
     const featureLastRun = (await getFeature())?.imdbId;
 
+    // console.log({ featureLastRun, imdbId }); // Debug
+
     // NoOp if no change in the movie
     if (featureLastRun === imdbId) {
       console.log(
-        `[${
-          new Date().toISOString()
-        }] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`,
+        `[${new Date().toISOString()}] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
       );
     } else {
       console.log(
-        `[${
-          new Date().toISOString()
-        }] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`,
+        `[${new Date().toISOString()}] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`
       );
       // Update Current Movie & send subscriber update
       await setFeature({ imdbId });
@@ -40,14 +38,14 @@ async function main(): Promise<void> {
       const { subject, content } = generateEmailUpdateBody(
         movieName,
         showingsString,
-        RIALTO_URL,
+        RIALTO_URL
       );
 
-      // Send Notification
-      await notifySubscribers({
-        method: "email",
-        data: { subject, content },
-      });
+      // // Send Notification
+      // await notifySubscribers({
+      //   method: "email",
+      //   data: { subject, content },
+      // });
     }
   } catch (err) {
     console.error(`Failed job due to error: ${err}`);
@@ -68,7 +66,7 @@ function extractLastPathElement(pathname: string): string {
 function generateEmailUpdateBody(
   movieName: string,
   showTimes: string,
-  link: URL,
+  link: URL
 ): EmailOptions {
   return {
     subject: `"${movieName}" at the Rialto`,
