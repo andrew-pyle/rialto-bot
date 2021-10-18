@@ -1,9 +1,8 @@
 import { fetchRialtoData, RIALTO_URL } from "./scrapeRialtoWebsite.ts";
 import { fetchImdbData } from "./imdbApi.ts";
 import { notifySubscribers } from "./notification.ts";
+import { getFeature, setFeature } from "./dataConnector.ts";
 import type { EmailOptions } from "./email.ts";
-
-const FEATURE_STORAGE_KEY = "rialtoFeature";
 
 async function main(): Promise<void> {
   try {
@@ -17,7 +16,7 @@ async function main(): Promise<void> {
     // console.log({ imdbId, movieName }); // Debug
 
     // Has the feature changed since the last run?
-    const featureLastRun = localStorage.getItem(FEATURE_STORAGE_KEY);
+    const featureLastRun = (await getFeature())?.imdbId;
 
     // NoOp if no change in the movie
     if (featureLastRun === imdbId) {
@@ -33,7 +32,7 @@ async function main(): Promise<void> {
         }] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`,
       );
       // Update Current Movie & send subscriber update
-      localStorage.setItem(FEATURE_STORAGE_KEY, imdbId);
+      await setFeature({ imdbId });
 
       // Convert dates into strings. TODO Create a better representation.
       const showingsString = generateShowTimesText(showTimes);
