@@ -1,18 +1,33 @@
-import { createClient } from "https://deno.land/x/supabase/mod.ts";
+import { createClient } from "https://deno.land/x/supabase@1.2.0/mod.ts";
 
-const { SUPABASE_URL, SUPABASE_KEY } = Deno.env.toObject();
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-/**
- * TODO use a better data structure than a table with a single row with a fixed ID.
- * Maybe a table of scrape run results. Also need to create a supabase user & policy to
- * represent the Deno Deploy server
- */
-export async function readFeatureFromSupabase() {
+export async function pushScrapeDataToSupabase(imdbId: string) {
+  const { error } = await supabase
+    .from("rialto_website_scrapes")
+    .insert([{ imdb_id: imdbId }]);
+
+  if (error) {
+    console.error(
+      `Error saving scrape run data to Supabase: ${JSON.stringify(error)}`
+    );
+  }
+}
+
+export async function getCurrentScrapeDataFromSupabase() {
+  interface TableRow {
+    id: number;
+    created_at: string; // timestamp with offset
+    imdb_id: string;
+  }
+
+  // Fetch the table row with latest `created_at` value
   const { data, error } = await supabase
-    .from("current_feature")
-    .select("id,imdb_id")
-    .eq("id", 1);
+    .from<TableRow>("rialto_website_scrapes")
+    .select("id,created_at,imdb_id")
+    .order("created_at", { ascending: false })
+    .limit(1);
 
   // console.log(currentFeature); // Debug
 
@@ -26,26 +41,13 @@ export async function readFeatureFromSupabase() {
   // console.log(data); // debug
 
   if (!data || data.length === 0) {
+    console.log(`No data returned for current Feature from supabase.`);
     return undefined;
   }
 
-  const currentFeature = { imdbId: data[0].imdb_id };
+  // There should only be one row anyway
+  const latest = data[0];
+  const currentFeature = { imdbId: latest.imdb_id };
 
   return currentFeature;
-}
-
-/**
- * TODO use a better data structure than a table with a single row with a fixed ID.
- */
-export async function setFeatureToSupabase(imdbId: string) {
-  const { error } = await supabase
-    .from("current_feature")
-    .update([{ imdb_id: imdbId }])
-    .eq("id", 1);
-
-  if (error) {
-    console.error(
-      `Error setting new Feature in Supabase: '${JSON.stringify(error)}'`
-    );
-  }
 }

@@ -4,6 +4,10 @@ import { notifySubscribers } from "./notification.ts";
 import { getFeature, setFeature } from "./dataConnector.ts";
 import type { EmailOptions } from "./email.ts";
 
+export interface Feature {
+  imdbId: string;
+}
+
 async function main(): Promise<void> {
   try {
     // Scrape the Rialto website
@@ -41,11 +45,11 @@ async function main(): Promise<void> {
         RIALTO_URL
       );
 
-      // // Send Notification
-      // await notifySubscribers({
-      //   method: "email",
-      //   data: { subject, content },
-      // });
+      // Send Notification
+      await notifySubscribers({
+        method: "email",
+        data: { subject, content },
+      });
     }
   } catch (err) {
     console.error(`Failed job due to error: ${err}`);
