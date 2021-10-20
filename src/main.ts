@@ -8,7 +8,7 @@ export interface Feature {
   imdbId: string;
 }
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   try {
     // Scrape the Rialto website
     const { imdbLink, showTimes } = await fetchRialtoData();
@@ -55,8 +55,6 @@ async function main(): Promise<void> {
     console.error(`Failed job due to error: ${err}`);
   }
 }
-
-main();
 
 /**
  * Helper Functions
