@@ -9,6 +9,7 @@ const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   persistSession: false,
   localStorage: memoryStorage,
+  detectSessionInUrl: false,
 });
 
 export async function pushScrapeDataToSupabase(imdbId: string) {
