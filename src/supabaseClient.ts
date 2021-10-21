@@ -1,5 +1,6 @@
 import { createClient } from "https://deno.land/x/supabase@1.2.0/mod.ts";
 
+// Authenticate client with Supabase. Authorization is managed by Supabase.
 const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
@@ -27,27 +28,27 @@ export async function getCurrentScrapeDataFromSupabase() {
     .from<TableRow>("rialto_website_scrapes")
     .select("id,created_at,imdb_id")
     .order("created_at", { ascending: false })
-    .limit(1);
+    .limit(1)
+    .single();
 
   // console.log(currentFeature); // Debug
 
   if (error) {
     console.error(
-      `Error getting current Feature from supabase: '${JSON.stringify(error)}'`
+      `Error getting current Feature from Supabase: '${JSON.stringify(error)}'`
     );
     return undefined;
   }
 
   // console.log(data); // debug
 
-  if (!data || data.length === 0) {
-    console.log(`No data returned for current Feature from supabase.`);
+  if (!data) {
+    console.log(`No data returned for current Feature from Supabase.`);
     return undefined;
   }
 
-  // There should only be one row anyway
-  const latest = data[0];
-  const currentFeature = { imdbId: latest.imdb_id };
+  // There should only be one row
+  const currentFeature = { imdbId: data.imdb_id };
 
   return currentFeature;
 }
