@@ -2,7 +2,6 @@ import { fetchRialtoData, RIALTO_URL } from "./scrapeRialtoWebsite.ts";
 import { fetchImdbData } from "./imdbApi.ts";
 import { notifySubscribers } from "./notification.ts";
 import { getFeature, setFeature } from "./dataConnector.ts";
-import type { EmailOptions } from "./email.ts";
 
 export interface Feature {
   imdbId: string;
@@ -29,28 +28,25 @@ export async function main(): Promise<void> {
       console.log(
         `[${new Date().toISOString()}] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
       );
-    } else {
-      console.log(
-        `[${new Date().toISOString()}] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`
-      );
-      // Update Current Movie & send subscriber update
-      await setFeature({ imdbId });
-
-      // Convert dates into strings. TODO Create a better representation.
-      const showingsString = generateShowTimesText(showTimes);
-
-      const { subject, content } = generateEmailUpdateBody(
-        movieName,
-        showingsString,
-        RIALTO_URL
-      );
-
       // Send Notification
       await notifySubscribers({
         method: "email",
-        data: { subject, content },
+        update: { movieName, showTimes, link: RIALTO_URL },
       });
+      return;
     }
+
+    // There is a new feature. Update Current Movie & send subscriber update
+    console.log(
+      `[${new Date().toISOString()}] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`
+    );
+    await setFeature({ imdbId });
+
+    // Send Notification
+    await notifySubscribers({
+      method: "email",
+      update: { movieName, showTimes, link: RIALTO_URL },
+    });
   } catch (err) {
     console.error(`Failed job due to error: ${err}`);
   }
@@ -63,24 +59,4 @@ export async function main(): Promise<void> {
 function extractLastPathElement(pathname: string): string {
   const elements = pathname.split("/").filter((el) => el.length > 0);
   return elements[elements.length - 1];
-}
-
-function generateEmailUpdateBody(
-  movieName: string,
-  showTimes: string,
-  link: URL
-): EmailOptions {
-  return {
-    subject: `"${movieName}" at the Rialto`,
-    content:
-      `<h1><a href="${link}">"${movieName}"</a> is now showing at the Rialto</h1><br>` +
-      `<br>` +
-      `${showTimes}<br>` +
-      `<br>` +
-      `<small>Powered by <a href="https://deno.land">Deno</a></small>`,
-  };
-}
-
-function generateShowTimesText(showTimes: Date[]): string {
-  return showTimes.map((date) => date.toDateString()).join(`<br/>`);
 }

@@ -5,6 +5,11 @@ const memoryStorage = new LocalStorageMemory();
 
 // Authenticate client with Supabase. Authorization is managed by Supabase.
 const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  throw new Error(
+    "I need environment variables to send an email: SUPABASE_URL & SUPABASE_SERVICE_KEY"
+  );
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   persistSession: false,
