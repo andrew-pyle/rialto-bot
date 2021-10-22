@@ -7,7 +7,7 @@ const memoryStorage = new LocalStorageMemory();
 const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   throw new Error(
-    "I need environment variables to send an email: SUPABASE_URL & SUPABASE_SERVICE_KEY"
+    "I need environment variables to connect to Supabase: SUPABASE_URL & SUPABASE_SERVICE_KEY"
   );
 }
 
