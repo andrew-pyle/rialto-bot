@@ -7,6 +7,8 @@ export interface Feature {
   imdbId: string;
 }
 
+const { IS_DEV, NOTIFY_WITHOUT_NEW_FEATURE } = Deno.env.toObject();
+
 export async function main(): Promise<void> {
   try {
     // Scrape the Rialto website
@@ -28,8 +30,8 @@ export async function main(): Promise<void> {
       console.log(
         `[${new Date().toISOString()}] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
       );
-      if (Deno.env.get("IS_DEV")) {
-        // Send Notification
+      if (IS_DEV || NOTIFY_WITHOUT_NEW_FEATURE) {
+        // Send Test Notification
         await notifySubscribers({
           method: "email",
           update: { movieName, showTimes, link: RIALTO_URL },
