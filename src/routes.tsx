@@ -49,3 +49,25 @@ export const botRun: Handler = async (request: Request) => {
   await main();
   return new Response("Bot Run Success");
 };
+
+export function SignUpForm() {
+  return (
+    <form method="POST" action="/signup">
+      <label>
+        Email Address:
+        <input
+          name="subscriber-email"
+          type="email"
+          placeholder="me@example.com"
+        />
+        <input type="hidden" name="email" />
+      </label>
+      <button type="submit">Sign Up</button>
+      <small>
+        We will send a test email to this address to let you confirm
+        subscription. Plus that way we make sure there wasn't a typo in the
+        email.
+      </small>
+    </form>
+  );
+}
