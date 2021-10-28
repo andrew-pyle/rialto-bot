@@ -28,7 +28,7 @@ export async function main(): Promise<void> {
     // NoOp if no change in the movie
     if (featureLastRun === imdbId) {
       console.log(
-        `[${new Date().toISOString()}] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
+        `Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
       );
       if (IS_DEV || NOTIFY_WITHOUT_NEW_FEATURE) {
         // Send Test Notification
@@ -41,9 +41,7 @@ export async function main(): Promise<void> {
     }
 
     // There is a new feature. Update Current Movie & send subscriber update
-    console.log(
-      `[${new Date().toISOString()}] New Rialto Feature: "${movieName}". IMDB id=${imdbId}`
-    );
+    console.log(`New Rialto Feature: "${movieName}". IMDB id=${imdbId}`);
     await setFeature({ imdbId });
 
     // Send Notification
