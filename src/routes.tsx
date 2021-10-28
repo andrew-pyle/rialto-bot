@@ -1,12 +1,5 @@
-/** @jsx h */
-/** @jsxFrag Fragment */
-import {
-  h,
-  Fragment,
-  Handler,
-  JSX,
-} from "https://deno.land/x/sift@0.4.2/mod.ts";
-import { main } from "./main.ts";
+import { Handler } from "https://deno.land/x/sift@0.4.2/mod.ts";
+import { main } from "./bot/main.ts";
 
 const { ALLOW_BOT_KEY } = Deno.env.toObject();
 if (!ALLOW_BOT_KEY) {
@@ -15,31 +8,10 @@ if (!ALLOW_BOT_KEY) {
   );
 }
 
-export function Page(): JSX.Element {
-  return (
-    <>
-      <h1>Rialto Bot</h1>
-      <h2>Coming Soon:</h2>
-      <p>Sign up for updates when the Rialto Theater is showing a new film.</p>
-      <p>Rialto Theater</p>
-      <p>Searcy, AR, USA</p>
-      <p>
-        This is an independent project. We are not associated with the Rialto
-        Theater, or the City of Searcy.
-      </p>
-    </>
-  );
-}
-
-export function NotFound(): JSX.Element {
-  return <h1>Page Not Found</h1>;
-}
-
 export const botRun: Handler = async (request: Request) => {
   const apiKey = request.headers.get("api-key");
-  const allowBotKey = Deno.env.get("ALLOW_BOT_KEY");
 
-  if (request.method !== "GET" || apiKey !== allowBotKey) {
+  if (request.method !== "GET" || apiKey !== ALLOW_BOT_KEY) {
     return new Response("Invalid Request", {
       status: 400,
       statusText: "Invalid Request",
@@ -49,25 +21,3 @@ export const botRun: Handler = async (request: Request) => {
   await main();
   return new Response("Bot Run Success");
 };
-
-export function SignUpForm() {
-  return (
-    <form method="POST" action="/signup">
-      <label>
-        Email Address:
-        <input
-          name="subscriber-email"
-          type="email"
-          placeholder="me@example.com"
-        />
-        <input type="hidden" name="email" />
-      </label>
-      <button type="submit">Sign Up</button>
-      <small>
-        We will send a test email to this address to let you confirm
-        subscription. Plus that way we make sure there wasn't a typo in the
-        email.
-      </small>
-    </form>
-  );
-}

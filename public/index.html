@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rialto Bot</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="section section-1">
+      <div class="container">
+        <h1>Rialto Bot</h1>
+        <p>
+          Sign up for updates when the Rialto Theater is showing a new film.
+        </p>
+        <p>Rialto Theater</p>
+        <p>Searcy, AR, USA</p>
+      </div>
+    </div>
+    <div class="section section-2">
+      <div class="container">
+        <h2>Coming Soon:</h2>
+        <form method="POST" action="/signup">
+          <label>
+            Email Address:
+            <input
+              name="subscriber-email"
+              type="email"
+              placeholder="me@example.com"
+              disabled
+            />
+            <input type="hidden" name="email" disabled />
+          </label>
+          <button type="submit" disabled>Sign Up</button>
+          <small>
+            We will send a test email to this address to let you confirm
+            subscription. Plus that way we make sure there wasn't a typo in the
+            email.
+          </small>
+        </form>
+      </div>
+    </div>
+    <div class="section section-3">
+      <div class="container">
+        <p>
+          This is an independent project. We are not associated with the Rialto
+          Theater, or the City of Searcy.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

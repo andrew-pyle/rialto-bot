@@ -1,2 +1,2 @@
-import { main } from "./src/main.ts";
+import { main } from "./src/bot/main.ts";
 await main();

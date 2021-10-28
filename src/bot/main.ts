@@ -36,7 +36,7 @@ export async function main(): Promise<void> {
         // Send Test Notification
         await notifySubscribers({
           method: "email",
-          update: { movieName, showTimes, link: RIALTO_URL },
+          update: { movieName, showTimes, link: new URL(RIALTO_URL) },
         });
       }
       return;
@@ -49,7 +49,7 @@ export async function main(): Promise<void> {
     // Send Notification
     await notifySubscribers({
       method: "email",
-      update: { movieName, showTimes, link: RIALTO_URL },
+      update: { movieName, showTimes, link: new URL(RIALTO_URL) },
     });
   } catch (err) {
     console.error(`Failed job due to error: ${err}`);

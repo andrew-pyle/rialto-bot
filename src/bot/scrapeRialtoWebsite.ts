@@ -5,7 +5,7 @@ import {
 } from "https://deno.land/x/cheerio@1.0.4/mod.ts";
 import parse from "https://deno.land/x/date_fns@v2.22.1/parse/index.js";
 
-export const RIALTO_URL = new URL("https://searcyrialtotheater.com");
+export const RIALTO_URL = "https://searcyrialtotheater.com";
 
 interface RialtoData {
   imdbLink: URL;
