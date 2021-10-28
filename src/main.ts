@@ -28,11 +28,13 @@ export async function main(): Promise<void> {
       console.log(
         `[${new Date().toISOString()}] Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
       );
-      // Send Notification
-      await notifySubscribers({
-        method: "email",
-        update: { movieName, showTimes, link: RIALTO_URL },
-      });
+      if (Deno.env.get("IS_DEV")) {
+        // Send Notification
+        await notifySubscribers({
+          method: "email",
+          update: { movieName, showTimes, link: RIALTO_URL },
+        });
+      }
       return;
     }
 

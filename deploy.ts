@@ -1,5 +1,8 @@
+import { installGlobals } from "https://deno.land/x/virtualstorage@0.1.0/mod.ts";
 import { main } from "./src/main.ts";
-const ONE_MINUTE = 1000 * 60; // * 60;
-setInterval(() => {
-  main();
-}, ONE_MINUTE);
+
+// Polyfill localStorage for Deno Deploy
+installGlobals();
+
+// Run bot
+await main();

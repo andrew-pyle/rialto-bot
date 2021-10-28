@@ -27,6 +27,7 @@ export async function mailjetSend({ sender, recepients, contents }: EmailData) {
       // CustomID: "AppGettingStartedTest",
     })),
   });
+  // console.log(body); // Debug
 
   const base64Credentials = btoa(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`);
   const res = await fetch("https://api.mailjet.com/v3.1/send", {

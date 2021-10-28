@@ -1,7 +1,8 @@
 import { mailjetSend } from "./mailjetClient.ts";
+import { getSubscribers } from "./dataConnector.ts";
 
-const { SEND_EMAIL, RECV_EMAIL } = Deno.env.toObject();
-if (!SEND_EMAIL || !RECV_EMAIL) {
+const { SEND_EMAIL } = Deno.env.toObject();
+if (!SEND_EMAIL) {
   throw new Error(
     "I need environment variables to send an email: SEND_EMAIL & RECV_EMAIL"
   );
@@ -28,7 +29,7 @@ interface EmailContents {
   html?: string;
 }
 
-interface Subscriber {
+export interface Subscriber {
   email: string;
   name?: string;
   textOnly?: boolean;
@@ -43,15 +44,24 @@ export async function notifySubscribers({ method, update }: SubscriberUpdate) {
   switch (method) {
     case "email": {
       const { movieName, showTimes, link } = update;
+      const subscribers = await getSubscribers();
+
+      if (!subscribers) {
+        console.error(
+          `Error sending email notifications: Subscribers list was empty.`
+        );
+        return;
+      }
+
       const emailData: EmailData = {
         sender: {
           email: SEND_EMAIL,
           name: "Rialto Bot",
         },
-        recepients: [
-          { email: RECV_EMAIL },
-          { email: RECV_EMAIL, textOnly: true },
-        ],
+        recepients: subscribers.map(({ email, textOnly }) => ({
+          email,
+          textOnly,
+        })),
         contents: generateEmailUpdateBody(movieName, showTimes, link),
       };
       await mailjetSend(emailData);

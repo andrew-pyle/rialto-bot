@@ -1,7 +1,4 @@
 import { createClient } from "https://deno.land/x/supabase@1.2.0/mod.ts";
-import { LocalStorageMemory } from "./localStorageMemory.ts";
-
-const memoryStorage = new LocalStorageMemory();
 
 // Authenticate client with Supabase. Authorization is managed by Supabase.
 const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
@@ -13,7 +10,6 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   persistSession: false,
-  localStorage: memoryStorage,
   detectSessionInUrl: false,
 });
 
@@ -60,8 +56,36 @@ export async function getCurrentScrapeDataFromSupabase() {
     return undefined;
   }
 
-  // There should only be one row
-  const currentFeature = { imdbId: data.imdb_id };
+  return data;
+}
 
-  return currentFeature;
+export async function getSubscriberListFromSupabase() {
+  interface TableRow {
+    id: number;
+    created_at: string;
+    name: string;
+    email: string;
+    sms: string;
+    text_email_only: boolean;
+  }
+
+  const tableName = Deno.env.get("IS_DEV") ? "dev_subscribers" : "subscribers";
+
+  // Fetch the table row with latest `created_at` value
+  const { data, error } = await supabase
+    .from<TableRow>(tableName)
+    .select("name,email,sms,text_email_only");
+
+  if (error) {
+    console.error(
+      `Error getting subscriber list from Supabase: '${JSON.stringify(error)}'`
+    );
+    return undefined;
+  }
+  if (!data) {
+    console.error(`No data returned for subscribers list from Supabase`);
+    return undefined;
+  }
+
+  return data;
 }

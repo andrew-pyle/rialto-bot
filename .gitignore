@@ -10,6 +10,7 @@ run.sh
 
 # Build
 dist/
+*.zip
 
 # OS
 .DS_Store

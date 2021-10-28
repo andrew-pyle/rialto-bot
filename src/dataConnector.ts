@@ -1,8 +1,10 @@
 import {
   pushScrapeDataToSupabase,
   getCurrentScrapeDataFromSupabase,
+  getSubscriberListFromSupabase,
 } from "./supabaseClient.ts";
 import type { Feature } from "./main.ts";
+import type { Subscriber } from "./notification.ts";
 
 export function isFeature(val: unknown): val is Feature {
   return (
@@ -17,5 +19,19 @@ export async function setFeature(feature: Feature): Promise<void> {
 }
 
 export async function getFeature(): Promise<Feature | undefined> {
-  return await getCurrentScrapeDataFromSupabase();
+  const row = await getCurrentScrapeDataFromSupabase();
+  // Use Application types
+  const currentFeature = row ? { imdbId: row.imdb_id } : undefined;
+  return currentFeature;
+}
+
+export async function getSubscribers(): Promise<Subscriber[] | undefined> {
+  // Use Application types
+  const rows = await getSubscriberListFromSupabase();
+  const subscribers = rows?.map<Subscriber>((row) => ({
+    email: row.email,
+    name: row.email,
+    textOnly: row.text_email_only,
+  }));
+  return subscribers;
 }
