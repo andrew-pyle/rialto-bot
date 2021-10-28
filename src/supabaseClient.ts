@@ -73,7 +73,8 @@ export async function getSubscriberListFromSupabase() {
     text_email_only: boolean;
   }
 
-  const tableName = Deno.env.get("IS_DEV") ? "dev_subscribers" : "subscribers";
+  const tableName =
+    Deno.env.get("IS_DEV") === "true" ? "dev_subscribers" : "subscribers";
 
   // Fetch the table row with latest `created_at` value
   const { data, error } = await supabase

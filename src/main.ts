@@ -9,6 +9,8 @@ export interface Feature {
 
 const { IS_DEV, NOTIFY_WITHOUT_NEW_FEATURE } = Deno.env.toObject();
 
+// console.log({ IS_DEV, NOTIFY_WITHOUT_NEW_FEATURE }); // Debug
+
 export async function main(): Promise<void> {
   try {
     // Scrape the Rialto website
@@ -30,7 +32,7 @@ export async function main(): Promise<void> {
       console.log(
         `Rialto Feature has not changed since the last run: "${movieName}". IMDB id=${imdbId}`
       );
-      if (IS_DEV || NOTIFY_WITHOUT_NEW_FEATURE) {
+      if (IS_DEV === "true" || NOTIFY_WITHOUT_NEW_FEATURE === "true") {
         // Send Test Notification
         await notifySubscribers({
           method: "email",
