@@ -1,4 +1,5 @@
 import { createClient } from "https://deno.land/x/supabase@1.2.0/mod.ts";
+import { LocalStorageMemory } from "./localStorageMemory.ts";
 
 // Authenticate client with Supabase. Authorization is managed by Supabase.
 const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = Deno.env.toObject();
@@ -8,7 +9,10 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   );
 }
 
+const localStorage = new LocalStorageMemory();
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+  localStorage,
   persistSession: false,
   detectSessionInUrl: false,
 });
